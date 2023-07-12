@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/sudhanva-nadiger/task/db"
 )
 
 var addCmd = &cobra.Command{
@@ -12,6 +13,12 @@ var addCmd = &cobra.Command{
 	Short: "Adds a task to your task list.",
 	Run: func(cmd *cobra.Command, args []string) {
 		task := strings.Join(args, " ")
+		_, err := db.CreateTask(task)
+
+		if err != nil {
+			fmt.Println("Something went wrong:", err.Error())
+			return
+		}
 		fmt.Printf("Added \"%s\" to your task list", task)
 	},
 }
