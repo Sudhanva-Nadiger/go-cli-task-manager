@@ -1,11 +1,25 @@
 package main
 
-import "github.com/sudhanva-nadiger/task/cmd"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/mitchellh/go-homedir"
+	"github.com/sudhanva-nadiger/task/cmd"
+	"github.com/sudhanva-nadiger/task/db"
+)
 
 func main() {
-	err := cmd.RootCmd.Execute()
+	home, _ := homedir.Dir()
+	dbPath := filepath.Join(home, "tasks.db")
+	must(db.Init(dbPath))
+	must(cmd.RootCmd.Execute())
+}
 
+func must(err error) {
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 }
