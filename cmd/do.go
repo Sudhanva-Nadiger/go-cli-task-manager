@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
+	"github.com/sudhanva-nadiger/task/db"
 )
 
 var doCmd = &cobra.Command{
@@ -20,8 +21,27 @@ var doCmd = &cobra.Command{
 			}
 			ids = append(ids, id)
 		}
+		tasks, err := db.AllTasks()
 
-		fmt.Printf("ids: %v\n", ids)
+		if err != nil {
+			fmt.Println("Something went wrong:", err.Error())
+			return
+		}
+
+		for _, id := range ids {
+			if id <= 0 || id > len(tasks) {
+				fmt.Println("Invalid task number:", id)
+				continue
+			}
+
+			t := tasks[id-1]
+			err := db.DeleteTask(t.Key)
+			if err != nil {
+				fmt.Printf("Failed to mark \"%d\" as completed, Error: %s\n", id, err)
+			} else {
+				fmt.Printf("Successfully marked \"%d\" as completed\n", id)
+			}
+		}
 	},
 }
 
